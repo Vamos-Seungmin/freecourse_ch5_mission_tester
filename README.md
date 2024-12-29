@@ -1,3 +1,7 @@
+## TODO
+- 정민님이 만든 Google Workspace를 사용하도록 코드를 변경해야 함.
+
+
 ## Relatives
 
 - Notion 

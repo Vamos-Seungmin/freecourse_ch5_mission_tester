@@ -63,7 +63,7 @@ def write_results_to_sheets(service: Resource, results: list[TestResult]) -> Non
     Each result is written to column D.
     """
     # True/False 값을 문자열로 변환하여 각각 하나의 셀에 기록
-    values = [[str(result.is_success)] for result in results]
+    values = [[result.is_success] for result in results]
 
     body = {"values": values}
 
@@ -144,22 +144,23 @@ def test_webpages(test_data_list: list[TestData]) -> list[TestResult]:
         # Playwright의 실행 컨텍스트를 열기 위해 `sync_playwright`를 사용.
 
         # Chromium 브라우저를 헤드리스 모드(브라우저 창 없이 백그라운드 실행)로 실행.
-        browser = p.chromium.launch(headless=False)
 
-        page = browser.new_page()
         # 브라우저의 새 페이지(탭) 생성.
 
         for test_data in test_data_list:
+            browser = p.chromium.launch(headless=False)
+            page = browser.new_page()
             # 입력으로 받은 IP 주소 목록을 순회하며 각각 테스트.
 
-            url = f"http://{test_data.ip}"
+            parsed_ip = test_data.ip.replace("http://", "")
+            url = f"http://{parsed_ip}"
             # 현재 IP 주소를 기반으로 URL 생성.
 
             status = False
             # 기본 상태는 실패(`False`), 추가 정보는 빈 문자열로 초기화.
 
             try:
-                page.goto(url, timeout=10000)  # 10초 타임아웃 설정
+                page.goto(url, timeout=5000)  # 10초 타임아웃 설정
                 # 해당 URL로 이동. 페이지가 로드되지 않으면 10초 후 타임아웃 발생.
 
                 # time.sleep(1)
@@ -196,7 +197,7 @@ def test_webpages(test_data_list: list[TestData]) -> list[TestResult]:
                 second_input.fill(
                     f"{test_data.name}님, Day4 과제 제출 완료!"
                 )  # 메시지 값을 입력
-
+                
                 # 4. "기사저장" 버튼 클릭
                 button = page.locator(
                     "text=기사저장"
@@ -216,14 +217,13 @@ def test_webpages(test_data_list: list[TestData]) -> list[TestResult]:
 
                     page.on("dialog", handle_dialog)  # Alert 이벤트 핸들러 등록
                     button.click()  # 버튼 클릭
+                    page.wait_for_timeout(2000)  # 1000ms(1초) 대기
                 except TimeoutError:
                     print("기사저장 버튼을 누른 후 Alert가 뜨지 않았습니다.")
 
-                # 잠시 대기 후 브라우저 닫기
-                page.wait_for_timeout(2000)
-                browser.close()
             except Exception as e:
-                print("ERROR")
+                print(f"[ERROR] {e}")
+                
 
             test_result = TestResult(
                 ip=test_data.ip,
@@ -233,9 +233,8 @@ def test_webpages(test_data_list: list[TestData]) -> list[TestResult]:
 
             # 현재 IP 주소에 대한 테스트 결과를 리스트에 추가.
             results.append(test_result)
-
-        browser.close()
-        # 브라우저를 닫아 리소스 해제.
+            browser.close()
+            # 브라우저를 닫아 리소스 해제.
 
     return results
     # 모든 IP에 대한 테스트 결과 리스트 반환.
