@@ -9,6 +9,7 @@
   - 코칭가이드: [크래프톤 정글 프리코스 - Chapter 5 코칭 가이드](https://www.notion.so/kraftonjungle/Chapter-5-16b4c6f37f8c8048ab8bf2952cb3006e)
 - Google Form: [Day5 오늘의 설문](https://docs.google.com/forms/d/e/1FAIpQLSflM2Vu2846cuC_f4pQTXBQIxywIHR8IANMDgU_mWBR7ILC5Q/viewform?usp=sharing)
 - Google Spreadsheet [Day 5 오늘의 설문(응답)](https://docs.google.com/spreadsheets/d/1g-zaVqayul-D3O0Fz_ESuTEMTMSnJ2K4LMLGTwAsAAU/edit?usp=sharing)
+- 서비스 계정: [노션](https://www.notion.so/kraftonjungle/Chapter-5-16b4c6f37f8c8048ab8bf2952cb3006e?pvs=4#16c4c6f37f8c80c28d93e0ffc644baf8)
 
 
 ## Prerequisite

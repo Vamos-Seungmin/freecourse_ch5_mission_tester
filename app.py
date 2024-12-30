@@ -8,6 +8,7 @@ import google.auth.transport.requests
 from google.oauth2.credentials import Credentials
 from google_auth_oauthlib.flow import InstalledAppFlow
 from googleapiclient.discovery import build, Resource
+from google.oauth2 import service_account
 
 # https://docs.google.com/spreadsheets/d/1g-zaVqayul-D3O0Fz_ESuTEMTMSnJ2K4LMLGTwAsAAU/edit?usp=sharing
 SCOPES = ["https://www.googleapis.com/auth/spreadsheets"]
@@ -15,6 +16,8 @@ SPREADSHEET_ID = "1g-zaVqayul-D3O0Fz_ESuTEMTMSnJ2K4LMLGTwAsAAU"
 
 아이피주소_시트범위 = "'sheet1'!B2:B"
 점수_시트범위 = "'sheet1'!D2:D"
+
+SERVICE_ACCOUNT_FILE = 'service-account-key.json'  # Google Cloud Console에서 다운로드한 서비스 계정 키 파일
 
 
 @dataclass
@@ -32,29 +35,21 @@ class TestResult:
 
 def get_google_sheets_service() -> Resource:
     """
-    Returns an authorized Sheets API service instance.
-    1) Checks if `token.json` exists for stored access tokens.
-    2) Otherwise, initiates the OAuth flow to create token.json.
+    Returns an authorized Sheets API service instance using service account credentials.
+    Requires a service account key JSON file.
     """
-    creds = None
-    if os.path.exists("token.json"):
-        creds = Credentials.from_authorized_user_file("token.json", SCOPES)
-    # If there are no valid credentials, let user log in.
-    if not creds or not creds.valid:
-        if creds and creds.expired and creds.refresh_token:
-            creds.refresh(google.auth.transport.requests.Request())
-        else:
-            flow = InstalledAppFlow.from_client_secrets_file(
-                "client_secret_132183848831-9smrudtn8d4f2rfv74idsrb61s7jkudd.apps.googleusercontent.com.json",
-                SCOPES,
-            )
-            creds = flow.run_local_server(port=0)
-        # Save the credentials for the next run
-        with open("token.json", "w") as token:
-            token.write(creds.to_json())
-
-    service = build("sheets", "v4", credentials=creds)
-    return service
+    try:
+        credentials = service_account.Credentials.from_service_account_file(
+            SERVICE_ACCOUNT_FILE, 
+            scopes=SCOPES
+        )
+        
+        service = build('sheets', 'v4', credentials=credentials)
+        return service
+        
+    except Exception as e:
+        print(f"Error creating sheets service: {e}")
+        raise
 
 
 def write_results_to_sheets(service: Resource, results: list[TestResult]) -> None:
