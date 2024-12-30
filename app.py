@@ -10,14 +10,14 @@ from google_auth_oauthlib.flow import InstalledAppFlow
 from googleapiclient.discovery import build, Resource
 from google.oauth2 import service_account
 
-# https://docs.google.com/spreadsheets/d/1g-zaVqayul-D3O0Fz_ESuTEMTMSnJ2K4LMLGTwAsAAU/edit?usp=sharing
 SCOPES = ["https://www.googleapis.com/auth/spreadsheets"]
-SPREADSHEET_ID = "1g-zaVqayul-D3O0Fz_ESuTEMTMSnJ2K4LMLGTwAsAAU"
+SPREADSHEET_ID = "1wCb8e7JordySKEssUvU_09mQSs_UvNkd7WmDgYk6o8A"
 
-아이피주소_시트범위 = "'sheet1'!B2:B"
-점수_시트범위 = "'sheet1'!D2:D"
+아이피주소_시트범위 = "'Chapter 5 개인과제 제출'!F2:F"
+이름_시트범위 = "'Chapter 5 개인과제 제출'!C2:C"
+점수_시트범위 = "'Chapter 5 개인과제 제출'!G2:G"
 
-SERVICE_ACCOUNT_FILE = 'service-account-key.json'  # Google Cloud Console에서 다운로드한 서비스 계정 키 파일
+SERVICE_ACCOUNT_FILE = 'precourse-service-account-key.json'  # Google Cloud Console에서 다운로드한 서비스 계정 키 파일
 
 
 @dataclass
@@ -106,7 +106,7 @@ def fetch_ips_and_names_from_sheets() -> list[TestData]:
             service.spreadsheets()
             .values()
             .batchGet(
-                spreadsheetId=SPREADSHEET_ID, ranges=["'sheet1'!B2:B", "'sheet1'!C2:C"]
+                spreadsheetId=SPREADSHEET_ID, ranges=[아이피주소_시트범위, 이름_시트범위]
             )
             .execute()
         )
